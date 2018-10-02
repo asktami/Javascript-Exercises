@@ -1,0 +1,454 @@
+When we see "..." in the code, it is either REST parameters or the SPREAD operator.
+
+There’s an easy way to distinguish between them:
+
+When ... is at the end of function parameters, it’s “REST parameters” and gathers the rest of the list into the array. When ... occurs in a function call or alike, it’s called a “sPREAD operator” and expands an array into the list. Use patterns:
+
+REST parameters are used to create functions that accept any number of arguments. The SPREAD operator is used to pass an array to functions that normally require a list of many arguments. Together they help to travel between a list and an array of parameters with ease.
+
+//*********************************
+REST
+//*********************************
+
+function sum( first, ...others ) {
+    for ( var i = 0; i < others.length; i++ )
+        first += others[i];
+    return first;
+}
+console.log(sum(1,2,3,4))// sum(1, 2, 3, 4) == 10;
+//first = 1, others = [2, 3, 4]
+
+
+//*********************************
+SPREAD
+//*********************************
+
+1. var abc = ['a', 'b', 'c'];
+var def = ['d', 'e', 'f'];
+var alpha = [ ...abc, ...def ];
+console.log(alpha) // alpha == ['a', 'b', 'c', 'd', 'e', 'f'];
+// alpha = abc.concat(def);
+
+
+2. let arr = [3, 5, 1];
+console.log( Math.max(...arr) ); // 5 (spread turns array into a list of arguments)
+
+
+3. let str = "Hello";
+console.log( [...str] ); // H,e,l,l,o
+
+
+//*********************************
+DESTRUCTURING ASSIGNMENT
+//*********************************
+
+Destructuring assignment is a special syntax that allows us to “unpack” arrays or objects into a bunch of variables, as sometimes they are more convenient. Destructuring also works great with complex functions that have a lot of parameters, default values, and soon we’ll see how these are handled too.
+
+Works with any iterable.
+
+***** ARRAY DESTRUCTURING ***** 
+let [item1 = default, item2, ...rest] = array
+
+1. var [c, ...m] = [1,2,3,4,5]; // c = 1, m = [2,3,4,5]
+
+1. Alternative way to write:
+let firstName = arr[0];
+let surname = arr[1];
+// let [firstName, surname] = arr;
+
+
+2.
+let arr = ["Ilya", "Kantor"]
+let [firstName, surname] = arr;
+
+console.log(firstName); // Ilya
+console.log(surname);  // Kantor
+
+
+3. 
+let [firstName, surname] = "Ilya Kantor".split(' ');
+console.log(firstName); // Ilya
+console.log(surname);  // Kantor
+
+
+4. // first and second elements are not needed
+let [, , title] = ["Julius", "Caesar", "Consul", "of the Roman Republic"];
+console.log( title ); // Consul
+
+
+5. 
+let [a, b, c] = "xyz"; // ["x", "y", "z"]
+console.log(a); // x
+console.log(b); // y
+console.log(c); // z
+
+
+6. 
+let user = {};
+[user.name, user.surname] = "Ilya Kantor".split(' ');
+
+console.log(user.name); // Ilya
+console.log(user);	// { name: 'Ilya', surname: 'Kantor' }
+
+
+7. Looping with .entries()
+let user = {
+  name: "John",
+  age: 30
+};
+
+// loop over keys-and-values
+for (let [key, value] of Object.entries(user)) {
+  console.log(`${key}:${value}`); 
+  
+}
+
+// OUTPUT:
+name:John
+age:30
+
+
+8. the rest '...'
+let [name1, name2, ...rest] = ["Julius", "Caesar", "Consul", "of the Roman Republic"];
+
+console.log(name1); // Julius
+console.log(name2); // Caesar
+
+console.log(rest[0]); // Consul
+console.log(rest[1]); // of the Roman Republic
+console.log(rest.length); // 2
+
+
+9. default values
+let [firstName, surname] = [];
+console.log(firstName); // undefined
+
+let [name = "Guest", surname = "Anonymous"] = ["Julius"];
+console.log(name);    // Julius (from array)
+console.log(surname); // Anonymous (default used)
+
+
+***** OBJECT DESTRUCTURING ***** 
+
+let {prop : varName = default, ...} = object
+
+1.
+let {var1, var2} = {var1:…, var2…}
+
+
+2.
+let options = {
+  title: "Menu",
+  width: 100,
+  height: 200
+};
+
+let {title, width, height} = options;
+
+console.log(title);  // Menu
+console.log(width);  // 100
+console.log(height); // 200
+
+
+3. // can change the order of properties in let {...}
+// NOTE: KEEPS properties with variable of same name!!!
+
+let {height, width, title} = { title: "Menu", height: 200, width: 100 }
+
+console.log(title);  // Menu
+console.log(width);  // 100
+console.log(height); // 200
+
+
+4. // NOTE: ASSIGNS a property to a variable with another name!!!
+// The colon shows “what : goes where”. 
+
+let {width: w, height: h, title} = options;
+
+// width -> w
+// height -> h
+// title -> title
+
+console.log(title);  // Menu
+console.log(w);      // 100
+console.log(h);      // 200
+
+
+5. // For potentially missing properties we can set default values using "=", like this:
+
+let options = {
+  title: "Menu"
+};
+
+let {width = 100, height = 200, title} = options;
+
+console.log(title);  // Menu
+console.log(width);  // 100
+console.log(height); // 200
+
+
+6. We also can combine both the colon and equality:
+
+let options = {
+  title: "Menu"
+};
+
+let {width: w = 100, height: h = 200, title} = options;
+
+console.log(title);  // Menu
+console.log(w);      // 100
+console.log(h);      // 200
+
+
+7. the rest '...'
+
+let options = {
+  title: "Menu",
+  height: 200,
+  width: 100
+};
+
+let {title, ...rest} = options;
+
+console.log(title);  // Menu
+console.log(rest.height);  // 200
+console.log(rest.width);   // 100
+
+
+8. nested
+
+let options = {
+  size: {
+    width: 100,
+    height: 200
+  },
+  items: ["Cake", "Donut"],
+  extra: true    // something extra that we will not destruct
+};
+
+
+// destructuring assignment on multiple lines for clarity
+let {
+  size: { // put size here
+    width,
+    height
+  },
+  items: [item1, item2], // assign items here
+  title = "Menu" // not present in the object (default value is used)
+} = options;
+
+console.log(title);  // Menu
+console.log(width);  // 100
+console.log(height); // 200
+console.log(item1);  // Cake
+console.log(item2);  // Donut
+
+
+9. 
+let options = {
+    size: {
+      width: 100,
+      height: 200
+    },
+    items: ["Cake", "Donut"],
+    extra: true    // something extra that we will not destruct
+  };
+
+let { size } = options;
+
+console.log(size);	
+// { width: 100, height: 200 }
+
+
+
+10. passing object to a function
+
+let options = {
+  title: "My menu",
+  items: ["Item1", "Item2"]
+};
+
+function showMenu({
+  title = "Untitled",
+  width: w = 100,  // width goes to w
+  height: h = 200, // height goes to h
+  items: [item1, item2] // items first element goes to item1, second to item2
+}) {
+  console.log( `${title} ${w} ${h}` ); // My Menu 100 200
+  console.log( item1 ); // Item1
+  console.log( item2 ); // Item2
+}
+
+showMenu(options);
+
+
+
+//*********************************
+The REST PARAMETER SYNTAX allows us to represent an indefinite number of arguments as an array.
+//*********************************
+
+Ex: function f(a, b, ...theArgs) {
+  // ...
+}
+
+1. 
+function sum(...theArgs) {	---> rest parameter syntax
+  return theArgs.reduce((previous, current) => {
+    return previous + current;
+  });
+}
+
+console.log(sum(1, 2, 3));
+// expected output: 6
+
+console.log(sum(1, 2, 3, 4));
+// expected output: 10
+
+
+const numbers = [1, 2, 3];
+console.log(sum(...numbers));		
+// expected output: 6
+
+
+
+//*********************************
+DESTRUCTURING REST PARAMETERS
+//*********************************
+
+1. function f(...[a, b, c]) {
+  return a + b + c;
+}
+f(1)          // NaN (b and c are undefined)
+f(1, 2, 3)    // 6
+f(1, 2, 3, 4) // 6 (the fourth parameter is not destructured)
+
+
+
+
+//*********************************
+SPREAD SYNTAX
+//*********************************
+
+SPREAD SYNTAX allows an iterable such as an array expression or string to be expanded in places where zero or more arguments (for function calls) or elements (for array literals) are expected, or an object expression to be expanded in places where zero or more key-value pairs (for object literals) are expected.
+
+SPREAD SYNTAX CAN BE APPLIED ONLY TO ITERABLE OBJECTS:
+
+You can NOT do this:
+var obj = {'key1': 'value1'};
+var array = [...obj]; // TypeError: obj is not iterable
+
+You CAN do this:
+For function calls:
+	myFunction(...iterableObj);
+
+For array literals or strings:
+	[...iterableObj, '4', 'five', 6];
+
+For object literals (new in ECMAScript 2018):
+	let objClone = { ...obj };
+
+2.
+function fun1(x, y, z) {
+	console.log(theArgs.length);
+}
+var argsX = [0, 1, 2];
+fun1(...argsX);		---> spread syntax
+fun1();  // 0
+fun1(5); // 1
+fun1(5, 6, 7); // 3
+
+3.
+function myFunction(v, w, x, y, z) { }
+var args = [0, 1];
+myFunction(-1, ...args, 2, ...[3]);		---> spread syntax
+
+4.
+var dateFields = [1970, 0, 1];  // 1 Jan 1970
+var d = new Date(...dateFields);		---> spread syntax
+
+5.
+var parts = ['shoulders', 'knees']; 
+var lyrics = ['head', ...parts, 'and', 'toes']; 	---> spread syntax
+// ["head", "shoulders", "knees", "and", "toes"]
+
+6. COPY an array:
+var arr = [1, 2, 3];
+var arr2 = [...arr]; // like arr.slice()	---> spread syntax
+arr2.push(4); 
+// arr2 becomes [1, 2, 3, 4]
+// arr remains unaffected
+
+7. Note: Spread syntax effectively goes ONE level deep while copying an array. Therefore, it may be unsuitable for copying multidimensional arrays as the following example shows:
+var a = [[9], [2], [3]];
+var b = [...a];
+b.shift().shift(); // 9
+// array b = [ [ 2 ], [ 3 ] ] NOTE: only 1 shift() occured!!!
+// array a is affected as well: [[], [2], [3]]
+
+8. array concat
+var arr1 = [0, 1, 2];
+var arr2 = [3, 4, 5];
+// Append all items from arr2 onto arr1
+arr1 = arr1.concat(arr2); // arr1 is now [0, 1, 2, 3, 4, 5]
+
+9. array concat with spread
+var arr1 = [0, 1, 2];
+var arr2 = [3, 4, 5];
+arr1 = [...arr2, ...arr1]; // arr1 is now [3, 4, 5, 0, 1, 2]
+
+10. with objects
+var obj1 = { foo: 'bar', x: 42 };
+var obj2 = { foo: 'baz', y: 13 };
+
+var clonedObj = { ...obj1 };
+// Object { foo: "bar", x: 42 }
+
+var mergedObj = { ...obj1, ...obj2 };
+// Object { foo: "baz", x: 42, y: 13 }
+// NOTE: 2nd foo property replace 1st!!!
+
+
+//*********************************
+DESTRUCURING Assignment
+//*********************************
+Array Matching
+Intuitive and flexible destructuring of Arrays into individual variables during assignment.
+
+- You can use destructuring and the rest operator together to extract the information into variables as you'd like them:
+1.
+// object = object
+let { x, y, ...z } = { x: 1, y: 2, a: 3, b: 4 };
+console.log(x); // 1
+console.log(y); // 2
+console.log(z); // { a: 3, b: 4 }
+
+2.
+// array
+var seasons = ['winter', 'spring', 'summer', 'autumn'];  
+var head, restArray;  
+[head, ...restArray] = seasons;
+console.log(head);      // => 'winter'  
+console.log(restArray); // => ['spring', 'summer', 'autumn']  
+
+
+3.
+// array
+var list = [1,2,3];
+console.log(list);	// [1, 2, 3]
+
+let [ a, , b ] = list;
+console.log(a);		// 1
+console.log(b);		// 3
+
+[ b, a ] = [ a, b ];
+console.log(b);		// 1
+console.log(a);		// 3
+
+
+4. with optional defaults
+var list = [ 7, 42 ]
+var [ a = 1, b = 2, c = 3, d ] = list 
+a === 7 
+b === 42 
+c === 3 
+d === undefined
